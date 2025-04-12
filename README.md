@@ -2,7 +2,7 @@
 
 A modern, responsive portfolio website built with HTML, TailwindCSS, and JavaScript to showcase my projects, skills, and experience as a DevOps enthusiast and full-stack developer.
 
-![Portfolio Preview]([assets/portfolio-preview.png](https://gajendra-001.github.io/Portfolio/))
+[Portfolio Preview](https://gajendra-001.github.io/Portfolio/)
 
 ## Features
 
