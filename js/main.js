@@ -126,14 +126,55 @@ function initTypingEffect() {
     }, 100);
 }
 
-// Contact form handling
+// Contact form handling with Formspree
 function initContactForm() {
     const contactForm = document.getElementById('contactForm');
     
     if (!contactForm) return;
     
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    
+    // Create notification function for form feedback
+    function showNotification(message, type) {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // Style the notification
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.right = '20px';
+        notification.style.padding = '15px 20px';
+        notification.style.borderRadius = '5px';
+        notification.style.zIndex = '1000';
+        notification.style.fontWeight = '500';
+        notification.style.transition = 'all 0.3s ease';
+        
+        if (type === 'success') {
+            notification.style.backgroundColor = 'rgba(16, 185, 129, 0.9)';
+            notification.style.color = 'white';
+        } else {
+            notification.style.backgroundColor = 'rgba(239, 68, 68, 0.9)';
+            notification.style.color = 'white';
+        }
+        
+        // Add to DOM
+        document.body.appendChild(notification);
+        
+        // Remove after 5 seconds
+        setTimeout(function() {
+            notification.style.opacity = '0';
+            setTimeout(function() {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 5000);
+    }
+    
+    // Add form submission event listener
     contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        // Don't prevent default - let Formspree handle the submission
+        // But we can still do client-side validation
         
         // Get form data
         const name = document.getElementById('name').value;
@@ -143,15 +184,32 @@ function initContactForm() {
         
         // Validate form data
         if (!name || !email || !subject || !message) {
-            alert('Please fill in all fields');
-            return;
+            e.preventDefault(); // Prevent form submission if validation fails
+            showNotification('Please fill in all fields', 'error');
+            return false;
         }
         
-        // Here you would typically send the data to your backend
-        // For demonstration, we'll just show a success message
-        alert(`Thank you for your message, ${name}! I'll get back to you soon.`);
+        // Change button text during submission
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
         
-        // Reset the form
-        contactForm.reset();
+        // Show sending notification
+        showNotification('Sending your message...', 'success');
+        
+        // We'll let the form submit naturally to Formspree
+        // The page will redirect back after submission based on the _next hidden field
+        
+        // After 5 seconds, reset button in case submission is taking long
+        setTimeout(function() {
+            submitButton.textContent = 'Send Message';
+            submitButton.disabled = false;
+        }, 5000);
     });
+    
+    // Check if user was redirected back after submission (URL has ?submitted=true)
+    if (window.location.search.includes('submitted=true')) {
+        showNotification('Message sent successfully!', 'success');
+        // Clear the URL parameter
+        window.history.replaceState(null, null, window.location.pathname + window.location.hash);
+    }
 }

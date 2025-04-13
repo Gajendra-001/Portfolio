@@ -20,7 +20,7 @@ function initResumeDownload() {
         e.preventDefault();
         
         // Path to your resume PDF file
-        const pdfPath = './resume/Gajendra_Singh_Resume.pdf';
+        const pdfPath = './assets/Gajendra_resume.pdf';
         
         // Create a temporary link element
         const link = document.createElement('a');
